@@ -1,0 +1,20 @@
+---
+const { src, alt } = Astro.props;
+---
+
+<img
+  class="zoomable"
+  src={src}
+  alt={alt}
+  data-lightbox-src={src}
+/>
+
+<style>
+  .zoomable {
+    cursor: pointer;
+    text-align: center;
+    border:#fff 5px solid;
+    width: 400px;
+    margin: 5px;
+  }
+</style>

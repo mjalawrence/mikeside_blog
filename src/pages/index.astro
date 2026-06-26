@@ -1,0 +1,55 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.mdx';
+
+import { getCollection } from 'astro:content';`≤`
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Lightbox from "../components/LightBox.astro";
+
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) =>a.data.buildDate.valueOf() - b.data.buildDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+
+    	<Lightbox />
+        <div class="home_body">
+            <div class="entry_item_list">
+                <p class="entry_header">Blog</p>
+                
+				Sort by:
+				<select id="sort-select">
+					<option id="buildSort" value="buildDate">Build Date</option>
+					<option id="pubSort" value="pubDate">Published Date</option>
+				</select>
+				<ol id="post-list">
+					{
+						posts.map((post) => (
+							<li
+								class="entry_point"
+								data-pubdate={post.data.pubDate.valueOf()}
+								data-builddate={post.data.buildDate.valueOf()}
+								>
+							<a class="entry_item" href={`/blog/${post.id}/`}>{post.data.title}</a>
+							</li>
+						))
+					}
+				</ol>
+            </div>
+            
+            <div class="home_container">
+                <img class="home_image" src="../../public/images/home/the_wall.PNG">
+            </div>
+        </div>
+        <script type="module" src="../../public/scripts/post-sort.js"></script>
+    </body>
+</html

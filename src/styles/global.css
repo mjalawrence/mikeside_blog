@@ -1,0 +1,141 @@
+body {
+    color: #fff;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#nav_logo {
+    width:600px;
+}
+.nav_logo {
+    height:80px;
+}
+
+.header_link {
+    text-decoration: none;
+    color: #fff;
+    padding: 5px 10px;
+    margin: 10px;
+}
+
+.header_link:hover {
+    background-color: #6f7079;
+}
+
+
+#main_body {
+    text-align: center;
+}
+
+.home_body {
+    display: flex;
+    background-color: #675d69;
+    justify-content: space-between;
+}
+
+.home_container {
+
+    background-color: #a1a1a1;
+}
+
+.entry_item_list {
+    /* text-align: center; */
+    padding: 10px;
+    width: 100%;
+    background-color: #a6a6a6;
+    margin: 10px;
+}
+
+.blog_list {
+}
+
+.entry_point {
+    padding: 5px;
+}
+
+.entry_header {
+    text-align: left;
+    padding:10px;
+    background-color: rgb(133, 133, 133);
+    font-size: 30px;
+    /* color: #fff; */
+}
+
+
+.entry_item {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.entry_item:hover {
+    background-color: rgb(104, 104, 104);
+}
+
+.home_image {
+    padding: 10px;
+}
+
+
+.image_cont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    background-color: #a1a1a1;
+}
+
+.entry_banner {
+    width: 100%;
+    /* text-align: left; */
+    background-color: rgb(55, 54, 54);
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.entry_title {
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.subheader {
+    background-color: #333333;
+    padding: 10px;
+}
+
+.journal_entry {
+    text-align: center;
+    width: 900px;
+    background-color: #868686;
+    padding:10px;
+}
+
+.journal_image {
+    border:#fff 5px solid;
+    width: 400px;
+    margin: 5px;
+}
+
+.landscape_image {
+    border:#fff 5px solid;
+    width: 50%;
+    margin: 5px;
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+body {
+    background-color: #444444;
+}

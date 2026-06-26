@@ -1,0 +1,82 @@
+---
+// src/components/Lightbox.astro
+---
+
+<div id="lightbox" hidden>
+  <img id="lightbox-image" alt="" />
+</div>
+
+<script>
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImage = document.getElementById("lightbox-image");
+
+  function openLightbox(src, alt = "") {
+    lightboxImage.src = src;
+    lightboxImage.alt = alt;
+
+    lightbox.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightboxImage.src = "";
+    lightboxImage.alt = "";
+    document.body.style.overflow = "";
+  }
+
+  // 👇 THIS is where your snippet goes
+  document.addEventListener("click", (e) => {
+    const img = e.target.closest(".zoomable");
+    if (!img) return;
+
+    openLightbox(
+      img.dataset.lightboxSrc || img.src,
+      img.alt
+    );
+  });
+
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.hidden && e.key === "Escape") {
+      closeLightbox();
+    }
+  });
+</script>
+
+<style>
+  #lightbox {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.85);
+
+    z-index: 9999;
+
+    cursor: zoom-out;
+  }
+
+  #lightbox[hidden] {
+    display: none;
+  }
+
+  #lightbox-image {
+    max-width: 90vw;
+    max-height: 90vh;
+
+    object-fit: contain;
+
+    cursor: auto;
+
+    border-radius: 8px;
+  }
+</style>
