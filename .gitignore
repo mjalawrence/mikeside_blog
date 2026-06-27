@@ -1,2 +1,5 @@
 node_modules/
 files.txt
+.gitstore
+.DS_Store
+**/.DS_Store
