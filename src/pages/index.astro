@@ -27,8 +27,8 @@ const posts = (await getCollection('blog')).sort(
                 <p class="entry_header">Blog</p>
                 
 				Sort by:
-				<select id="sort-select">
-					<option id="buildSort" value="buildDate">Build Date</option>
+				<select id="sort-select" class="custom-select">
+					<option id="buildSort" value="buildDate" selected>Build Date</option>
 					<option id="pubSort" value="pubDate">Published Date</option>
 				</select>
 				<ol id="post-list">

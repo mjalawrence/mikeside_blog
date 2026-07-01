@@ -1,5 +1,5 @@
 ---
-const { src, alt } = Astro.props;
+const { src, alt, gallery } = Astro.props;
 ---
 
 <img
@@ -7,14 +7,5 @@ const { src, alt } = Astro.props;
   src={src}
   alt={alt}
   data-lightbox-src={src}
+  data-gallery={gallery}
 />
-
-<style>
-  .zoomable {
-    cursor: pointer;
-    text-align: center;
-    border:#fff 5px solid;
-    width: 400px;
-    margin: 5px;
-  }
-</style>

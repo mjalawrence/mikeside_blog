@@ -3,16 +3,53 @@
 ---
 
 <div id="lightbox" hidden>
-  <img id="lightbox-image" alt="" />
+  <button id="prev">←</button>
+    <div id="lightbox-img-container">
+      <img id="lightbox-image">
+    </div>
+  <button id="next">→</button>
 </div>
 
 <script>
+
   const lightbox = document.getElementById("lightbox");
   const lightboxImage = document.getElementById("lightbox-image");
+  const lightboxImgCont = document.getElementById("lightbox-img-container");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
 
-  function openLightbox(src, alt = "") {
-    lightboxImage.src = src;
-    lightboxImage.alt = alt;
+  let currentGallery = [];
+  let currentIndex = 0;
+
+  function showImage(index: number) {
+    const img = currentGallery[index];
+
+    // lightboxImage.src = img.dataset.lightboxSrc || img.src;
+    lightboxImage.src = img.src;
+    lightboxImage.alt = img.alt;
+
+    currentIndex = index;
+  }
+
+  function openLightbox(clickedImg) {
+    const gallery = clickedImg.dataset.gallery;
+
+    if (gallery) {
+      prevBtn.hidden = false;
+      nextBtn.hidden = false;
+      currentGallery = Array.from(
+        document.querySelectorAll(
+          `.zoomable[data-gallery="${gallery}"]`
+        )
+      );
+    } else {
+      prevBtn.hidden = true;
+      nextBtn.hidden = true;
+      currentGallery = [clickedImg];
+    }
+
+    currentIndex = currentGallery.indexOf(clickedImg);
+    showImage(currentIndex);
 
     lightbox.hidden = false;
     document.body.style.overflow = "hidden";
@@ -23,60 +60,70 @@
     lightboxImage.src = "";
     lightboxImage.alt = "";
     document.body.style.overflow = "";
+
+    currentGallery = [];
+    currentIndex = 0;
   }
 
-  // 👇 THIS is where your snippet goes
+  function nextImage() {
+    if (currentGallery.length <= 1) return;
+
+    currentIndex = (currentIndex + 1) % currentGallery.length;
+    
+    showImage(currentIndex);
+  }
+
+  function previousImage() {
+    if (currentGallery.length <= 1) return;
+
+    currentIndex =
+      (currentIndex - 1 + currentGallery.length) %
+      currentGallery.length;
+
+    showImage(currentIndex);
+  }
+
+  // Click on an .zoomable image to open lightbox
   document.addEventListener("click", (e) => {
     const img = e.target.closest(".zoomable");
     if (!img) return;
 
-    openLightbox(
-      img.dataset.lightboxSrc || img.src,
-      img.alt
-    );
+    openLightbox(img);
   });
 
+  // Close lightbox
   lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
+    if (e.target === lightbox || e.target === lightboxImgCont || e.target === lightboxImage) {
       closeLightbox();
     }
   });
 
+  // Click the prev/next buttons to navigate
+  prevBtn.addEventListener("click", (e) => {
+        previousImage();
+  });
+
+  nextBtn.addEventListener("click", (e) => {
+        nextImage();
+  });
+
+  // Navigate with keyboard
   document.addEventListener("keydown", (e) => {
-    if (!lightbox.hidden && e.key === "Escape") {
-      closeLightbox();
+    if (lightbox.hidden) return;
+
+    switch (e.key) {
+      case "Escape":
+        closeLightbox();
+        break;
+
+      case "ArrowRight":
+        nextImage();
+        break;
+
+      case "ArrowLeft":
+        previousImage();
+        break;
     }
   });
+  
 </script>
-
-<style>
-  #lightbox {
-    position: fixed;
-    inset: 0;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.85);
-
-    z-index: 9999;
-
-    cursor: zoom-out;
-  }
-
-  #lightbox[hidden] {
-    display: none;
-  }
-
-  #lightbox-image {
-    max-width: 90vw;
-    max-height: 90vh;
-
-    object-fit: contain;
-
-    cursor: auto;
-
-    border-radius: 8px;
-  }
-</style>
