@@ -3,15 +3,14 @@
 ---
 
 <div id="lightbox" hidden>
-  <button id="prev">←</button>
-    <div id="lightbox-img-container">
-      <img id="lightbox-image">
-    </div>
-  <button id="next">→</button>
+  <button class="lightbox-btn" id="prev">←</button>
+  <div id="lightbox-img-container">
+    <img id="lightbox-image" />
+  </div>
+  <button class="lightbox-btn" id="next">→</button>
 </div>
 
 <script>
-
   const lightbox = document.getElementById("lightbox");
   const lightboxImage = document.getElementById("lightbox-image");
   const lightboxImgCont = document.getElementById("lightbox-img-container");
@@ -37,11 +36,7 @@
     if (gallery) {
       prevBtn.hidden = false;
       nextBtn.hidden = false;
-      currentGallery = Array.from(
-        document.querySelectorAll(
-          `.zoomable[data-gallery="${gallery}"]`
-        )
-      );
+      currentGallery = Array.from(document.querySelectorAll(`.zoomable[data-gallery="${gallery}"]`));
     } else {
       prevBtn.hidden = true;
       nextBtn.hidden = true;
@@ -69,16 +64,14 @@
     if (currentGallery.length <= 1) return;
 
     currentIndex = (currentIndex + 1) % currentGallery.length;
-    
+
     showImage(currentIndex);
   }
 
   function previousImage() {
     if (currentGallery.length <= 1) return;
 
-    currentIndex =
-      (currentIndex - 1 + currentGallery.length) %
-      currentGallery.length;
+    currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
 
     showImage(currentIndex);
   }
@@ -100,11 +93,11 @@
 
   // Click the prev/next buttons to navigate
   prevBtn.addEventListener("click", (e) => {
-        previousImage();
+    previousImage();
   });
 
   nextBtn.addEventListener("click", (e) => {
-        nextImage();
+    nextImage();
   });
 
   // Navigate with keyboard
@@ -125,5 +118,4 @@
         break;
     }
   });
-  
 </script>
