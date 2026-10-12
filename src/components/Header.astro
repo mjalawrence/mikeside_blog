@@ -1,0 +1,59 @@
+---
+// const isHome = Astro.url.pathname === "/";
+---
+
+<header transition:persist>
+  <nav class="navbar">
+    <a class="header-logo" href="/">
+      <img class="nav_logo" src="/images/logos/logo_qp.png" alt="Logo" />
+      <img class="nav_logo" src="/images/logos/logo_name.png" alt="Site name" />
+    </a>
+
+    <div>
+      {
+        (
+          // !isHome && (
+          <a class="header_link" href="/">
+            Home
+          </a>
+        )
+      }
+    </div>
+    <div>
+      {
+        (
+          <a class="header_link" href="/blog/day1/">
+            Blog
+          </a>
+        )
+      }
+    </div>
+    <div>
+      {
+        (
+          <a class="header_link" href="/support">
+            Support
+          </a>
+        )
+      }
+    </div>
+    <div>
+      {
+        (
+          <a class="header_link" href="/merch">
+            Merch
+          </a>
+        )
+      }
+    </div>
+    <div>
+      {
+        (
+          <a class="header_link" href="/tetris">
+            Tetris
+          </a>
+        )
+      }
+    </div>
+  </nav>
+</header>
