@@ -1,5 +1,12 @@
 {
 	"_variables": {
-		"lastUpdateCheck": 1782497809745
+		"lastUpdateCheck": 1789799917563,
+		"[mdx]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.formatOnSave": true
+		},
+		"files.associations": {
+			"*.mdx": "mdx"
+		}
 	}
 }
