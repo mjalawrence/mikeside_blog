@@ -1,55 +1,140 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.mdx';
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
 
-import { getCollection } from 'astro:content';`≤`
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from "astro:content";
+`≤`;
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import Lightbox from "../components/LightBox.astro";
 
+const posts = (await getCollection("blog")).sort((a, b) => a.data.buildDate.valueOf() - b.data.buildDate.valueOf());
+import ImageCarousel from "../components/ImageCarousel.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) =>a.data.buildDate.valueOf() - b.data.buildDate.valueOf(),
-);
+const images = [
+  {
+    src: "../../images/jay_photos/vertwall.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/wallfull.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/ledgeetal.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/bank2curbetal.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/qpbank.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/curbetal.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/wall3.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/wall4.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/wall6.jpg",
+    alt: "",
+  },
+  {
+    src: "../../images/jay_photos/wall_stairs.jpg",
+    alt: "",
+  },
+  // {
+  //   src: "../../images/jay_photos/bank2curb.jpg",
+  //   alt: "",
+  // },
+  // {
+  //   src: "../../images/jay_photos/40bank.jpg",
+  //   alt: "",
+  // },
+  // {
+  //   src: "../../images/jay_photos/curb.jpg",
+  // //   alt: "",
+  // // },
+  // {
+  //   src: "../../images/jay_photos/barrier.jpg",
+  //   alt: "",
+  // },
+  // // {
+  // //   src: "../../images/jay_photos/ledge.jpg",
+  // //   alt: "",
+  // // },
+  // // {
+  // //   src: "../../images/jay_photos/miniqp.jpg",
+  // //   alt: "",
+  // // },
+  // {
+  //   src: "../../images/jay_photos/wall2.jpg",
+  //   alt: "",
+  // },
+  // {
+  //   src: "../../images/jay_photos/wall5.jpg",
+  //   alt: "",
+  // },
+];
 ---
 
-<!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <!-- <ImageCarousel images={images} gallery="rod-curb" /> -->
 
-    	<Lightbox />
-        <div class="home_body">
-            <div class="entry_item_list">
-                <p class="entry_header">Blog</p>
-                
-				Sort by:
-				<select id="sort-select" class="custom-select">
-					<option id="buildSort" value="buildDate" selected>Build Date</option>
-					<option id="pubSort" value="pubDate">Published Date</option>
-				</select>
-				<ol id="post-list">
-					{
-						posts.map((post) => (
-							<li
-								class="entry_point"
-								data-pubdate={post.data.pubDate.valueOf()}
-								data-builddate={post.data.buildDate.valueOf()}
-								>
-							<a class="entry_item" href={`/blog/${post.id}/`}>{post.data.title}</a>
-							</li>
-						))
-					}
-				</ol>
-            </div>
-            
-            <div class="home_container">
-                <img class="home_image" src="../../public/images/home/the_wall.PNG">
-            </div>
+    <!-- <Lightbox /> -->
+    <div class="home_body">
+      <div class="home-text">
+        <div class="home-introduction">
+          <!-- <h1 class="intro-title">Welcome</h1> -->
+          <div class="intro-sentence">Mikeside is a DIY skate park in Neepsend, Sheffield.</div>
+          <div class="intro-sentence">It is a community project using reclaimed materials and funded by donations.</div>
+          <div class="intro-sentence">Started 16th August 2025.</div>
         </div>
-        <script type="module" src="../../public/scripts/post-sort.js"></script>
-    </body>
-</html
+
+        <div class="entry_item_list">
+          <p class="entry_header">Blog</p>
+          <div class="blog-container">
+            <p>Learn more about what went into building it:</p>
+
+            Sort by:
+            <select id="sort-select" class="custom-select">
+              <option id="buildSort" value="buildDate" selected>Timeline</option>
+              <option id="pubSort" value="pubDate">Published Recently</option>
+            </select>
+            <ol id="post-list">
+              {
+                posts.map((post) => (
+                  <li class="entry_point" data-pubdate={post.data.pubDate.valueOf()} data-builddate={post.data.buildDate.valueOf()}>
+                    <a class="entry_item" href={`/blog/${post.id}/`}>
+                      {post.data.title}
+                    </a>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-image-container">
+        <ImageCarousel images={images} gallery="rod-curb" />
+        <!-- <img class="home_image" src="../../public/images/home/the_wall.PNG" /> -->
+      </div>
+    </div>
+    <script type="module" src="../../public/scripts/post-sort.js"></script>
+  </body>
+</html>
