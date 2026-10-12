@@ -4,19 +4,25 @@ description: "Journal entry"
 buildDate: 2025-08-28
 pubDate: 2026-06-18
 updatedDate: 2026-06-18
+obNumber: 2
 ---
 
-import ImageLightbox from "../../components/ImageLightbox.astro";
+import ImageLightBox from "../../components/ImageLightBox.astro";
 
 <div id="blog_content">
     
     <div class="image_cont">
 
         <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/leftwing_backfill.jpeg" gallery="backfill" />
-            <ImageLightbox src="/images/bank2curb_wings/rightwing_backfill2.jpeg" gallery="backfill" />
+        <ImageLightBox src="/images/bank2curb_wings/wing_sketch.jpeg" gallery="sketch" />
+        <ImageLightBox src="/images/bank2curb_wings/wing_sketch2.jpeg" gallery="sketch" />
+        </div>
+
+        <div class="carousel">
+            <ImageLightBox src="/images/bank2curb_wings/leftwing_backfill.jpeg" gallery="backfill" />
+            <ImageLightBox src="/images/bank2curb_wings/rightwing_backfill2.jpeg" gallery="backfill" />
             {/* <img class="journal_ima÷ge" src="../../../public/images/bank2curb_wings/leftwing_backfill2.jpeg" gallery="" /> */}
-            {/* <ImageLightbox src="/images/bank2curb_wings/rightwing_backfill.jpeg" gallery="" /> */}
+            {/* <ImageLightBox src="/images/bank2curb_wings/rightwing_backfill.jpeg" gallery="" /> */}
             {/* <img class="journal÷_image" src="../../../public/images/bank2curb_wings/leftwing_backfill3.jpeg" gallery="" /> */}
         </div>
 
@@ -25,52 +31,53 @@ import ImageLightbox from "../../components/ImageLightbox.astro";
         `}</p>
 
         <div class="carousel">
-            {/* <ImageLightbox src="/images/bank2curb_wings/leftwing_backfill4.jpeg" gallery="soil" /> */}
-            <ImageLightbox src="/images/bank2curb_wings/backfill_soil_right.jpeg" gallery="soil" />
-            <ImageLightbox src="/images/bank2curb_wings/backfill_soil_left.jpeg" gallery="soil" />
+            {/* <ImageLightBox src="/images/bank2curb_wings/leftwing_backfill4.jpeg" gallery="soil" /> */}
+            <ImageLightBox src="/images/bank2curb_wings/backfill_soil_right.jpeg" gallery="soil" />
+            <ImageLightBox src="/images/bank2curb_wings/backfill_soil_left.jpeg" gallery="soil" />
         </div>
-        
+
         <p class="journal_entry">{`
             Wednesday 27th, I had the shuttering figured out and the backfill and heras rebar prepared. Thursday 28th after work, I was ready to go and managed to get a hand from Yangchen, who exchanged his help for an interview for his dissertation.
         `}</p>
-        
-        <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/yang_shov.jpeg" gallery="yang" />
-            <ImageLightbox src="/images/bank2curb_wings/yang_shov2.jpeg" gallery="yang" />
-        </div>
-        
-        <p class="journal_entry">{`
-            We were concreting at 7.30 and since the right wing went in quickly and Yangchen was down for more we pressed on and got the left wing done on the same night, finishing around 10.30. 
-        `}</p>
-        
-        <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/yang_wing.jpeg" gallery="yang-finish" />
-            <ImageLightbox src="/images/bank2curb_wings/yang_wing2.jpeg" gallery="yang-finish" />
-            <ImageLightbox src="/images/bank2curb_wings/yang_wing3.jpeg" gallery="yang-finish" />
-        </div>
 
         <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/yang2.jpeg" gallery="name" />
-            <ImageLightbox src="/images/bank2curb_wings/yang3.jpeg" gallery="name" />
-        </div>  
+            <ImageLightBox src="/images/bank2curb_wings/yang_shov.jpeg" gallery="yang" />
+            <ImageLightBox src="/images/bank2curb_wings/yang_shov2.jpeg" gallery="yang" />
+        </div>
 
         <p class="journal_entry">{`
-            I hadn’t made up my mind whether to make the wings into a roll on grind but Yangchen wanted it so I went with it and was pleased with the result so I asked him to write the Chinese characters of his name on the roll on grind as a momento. 
+            We were concreting at 7.30 and since the right wing went in quickly and Yangchen was down for more we pressed on and got the left wing done on the same night, finishing around 10.30.
         `}</p>
 
         <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/next_wings.jpeg" gallery="next" />
-            <ImageLightbox src="/images/bank2curb_wings/next_wings_left.jpeg" gallery="next" />
+            <ImageLightBox src="/images/bank2curb_wings/yang_wing.jpeg" gallery="yang-finish" />
+            <ImageLightBox src="/images/bank2curb_wings/yang_wing2.jpeg" gallery="yang-finish" />
+            <ImageLightBox src="/images/bank2curb_wings/yang_wing3.jpeg" gallery="yang-finish" />
         </div>
-          
-        <ImageLightbox src="/images/bank2curb_wings/next_wings2.jpeg" gallery="next" />
-        
+
+        <div class="carousel">
+            <ImageLightBox src="/images/bank2curb_wings/yang2.jpeg" gallery="name" />
+            <ImageLightBox src="/images/bank2curb_wings/yang3.jpeg" gallery="name" />
+        </div>
+
+        <p class="journal_entry">{`
+            I hadn’t made up my mind whether to make the wings into a roll on grind but Yangchen wanted it so I went with it and was pleased with the result so I asked him to write the Chinese characters of his name on the roll on grind as a momento.
+        `}</p>
+
+        <div class="carousel">
+            <ImageLightBox src="/images/bank2curb_wings/next_wings.jpeg" gallery="next" />
+            <ImageLightBox src="/images/bank2curb_wings/next_wings_left.jpeg" gallery="next" />
+        </div>
+
+        <ImageLightBox src="/images/bank2curb_wings/next_wings2.jpeg" gallery="next" />
+
         <h2>Reflections</h2>
 
         <div class="carousel">
-            <ImageLightbox src="/images/bank2curb_wings/lacquered.jpeg" gallery="finish" />
-            <ImageLightbox src="/images/bank2curb_wings/dried.jpeg" gallery="finish" />
-        </div>  
+            <ImageLightBox src="/images/bank2curb_wings/lacquered.jpeg" gallery="finish" />
+            <ImageLightBox src="/images/bank2curb_wings/dried.jpeg" gallery="finish" />
+        </div>
 
     </div>
+
 </div>
