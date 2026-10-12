@@ -7,10 +7,17 @@ function sortBy(attr) {
 
   const items = [...list.children];
 
-items.sort(
-  (a, b) =>
-    Number(a.dataset[attr]) - Number(b.dataset[attr]) 
-);
+  if (attr === 'builddate') {
+    items.sort(
+      (a, b) =>
+        Number(a.dataset.builddate) - Number(b.dataset.builddate)
+    );
+  } else if (attr === 'pubdate') {
+    items.sort(
+      (a, b) =>
+        Number(b.dataset.pubdate) - Number(a.dataset.pubdate)
+    );
+  }
 
   list.replaceChildren(...items);
 }
