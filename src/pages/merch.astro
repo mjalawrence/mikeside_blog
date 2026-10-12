@@ -1,0 +1,67 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+
+// import { getCollection } from "astro:content";
+// `≤`;
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <article>
+        <div class="main_body">
+          <div class="image_cont">
+            <div class="entry_banner">
+              <h1 class="entry_title">Merch</h1>
+            </div>
+
+            <h2 class="subheader">First run</h2>
+
+            <div class="merch_carousel">
+              <img class="gofundme_image" src="../../../public/images/merch/grey_design_tee.jpeg" />
+              <img class="gofundme_image" src="../../../public/images/merch/red_design_tee.jpeg" />
+              <img class="gofundme_image" src="../../../public/images/merch/tote.jpeg" />
+            </div>
+
+            <div class="parky_info">
+              <p>Designed and printed by Parky <a href="https://www.instagram.com/parkydoodles/" target="_blank"> @parkydoodles</a>&nbsp;</p>
+              <a class="parky_link_container" href="https://www.instagram.com/parkydoodles/" target="_blank">
+                <img class="parky_link" src="./../../public/images/misc/parky_logo.jpeg" />
+              </a>
+            </div>
+
+            <h2 class="subheader">First sticker</h2>
+
+            <div class="merch_carousel">
+              <img class="gofundme_image" src="../../../public/images/merch/sticker.jpeg" />
+            </div>
+
+            <h2 class="subheader">Second run of T-shirts</h2>
+
+            <div class="merch_carousel">
+              <img class="gofundme_image" src="../../../public/images/merch/orange_logo_tee.jpeg" />
+              <img class="gofundme_image" src="../../../public/images/merch/maroon_logo_tee.jpeg" />
+              <img class="gofundme_image" src="../../../public/images/merch/yellow_logo_tee.jpeg" />
+            </div>
+
+            <h2 class="subheader">Mikedrop Zine</h2>
+
+            <div class="merch_carousel">
+              <img class="gofundme_image" src="../../../public/images/merch/mikedrop_cover.jpeg" />
+            </div>
+          </div>
+        </div>
+
+        <Footer />
+      </article>
+    </main>
+  </body>
+</html>

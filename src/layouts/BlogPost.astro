@@ -1,50 +1,78 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.mdx';
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
 import Lightbox from "../components/LightBox.astro";
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<"blog">["data"] & {
+  previousPost?: CollectionEntry<"blog">;
+  nextPost?: CollectionEntry<"blog">;
+};
 
-const { title, description, buildDate, pubDate, updatedDate } = Astro.props;
+const { title, description, buildDate, pubDate, updatedDate, previousPost, nextPost } = Astro.props;
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-	</head>
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
 
-	<body>
-		
-    	<Lightbox />
-		<Header />
-		<main>
-			<article>
-				<div class="main_body">
-					<div class="image_cont">
-						<div class="entry_banner">
-							<h1 class="entry_title">{title}</h1>
-							<h3 class="entry_title">Published - <FormattedDate date={pubDate} /></h3>
-						</div>
-						<hr />
-					</div>
-					<slot />
+  <body>
+    <Lightbox />
+    <Header />
+    <main>
+      <article>
+        <div class="main_body">
+          <div class="image_cont">
+            <div class="entry_banner">
+              <h1 class="entry_title">{title}</h1>
+              <h3 class="entry_title">Published -&nbsp;<FormattedDate date={pubDate} /></h3>
+            </div>
+            <hr />
+          </div>
+          <slot />
+        </div>
+      </article>
+    </main>
+    <footer class="post-footer">
+      <div class="date">
+        {
+          updatedDate && (
+            <div class="last-updated-on">
+              Last updated on <FormattedDate date={updatedDate} />
+            </div>
+          )
+        }
+      </div>
+      <nav class="post-navigation">
+        {
+          previousPost && (
+            <div class="post-links previous-post">
+              <div class="nav-chapter">Previous Chapter:</div>
+              <a class="post-link-name" href={`/blog/${previousPost.id}`}>
+                {previousPost.data.title}
+              </a>
+            </div>
+          )
+        }
 
-				</div>
-			</article>
-		</main>
-			<div class="date">
-				{
-					updatedDate && (
-						<div class="last-updated-on">
-							Last updated on <FormattedDate date={updatedDate} />
-						</div>
-					)
-				}
-			</div>
-		<Footer />
-	</body>
+        <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"> ↑ </button>
+
+        {
+          nextPost && (
+            <div class="post-links next-post">
+              <div class="nav-chapter">Next Chapter:</div>
+              <a class="post-link-name" href={`/blog/${nextPost.id}`}>
+                {nextPost.data.title}
+              </a>
+            </div>
+          )
+        }
+      </nav>
+    </footer>
+
+    <Footer />
+  </body>
 </html>

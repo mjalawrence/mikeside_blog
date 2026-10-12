@@ -1,0 +1,51 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+
+import { getCollection } from "astro:content";
+`≤`;
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <article>
+        <div class="main_body">
+          <div class="image_cont">
+            <!-- <div class="tetris_body"> -->
+            <div class="entry_banner">
+              <h1 class="entry_title">Support Mikeside</h1>
+            </div>
+          </div>
+          <div class="support_content">
+            <div class="gofundme_section">
+              <div class="gofundme_info">
+                <div class="info_title">Donate</div>
+                <div>Help me cover the cost of materials.</div>
+                <div>(concrete & mortar, all else reclaimed)</div>
+                <div class="gofundme_btn_container">
+                  <a class="gofundme_btn" href="https://gofund.me/49994ec23" target="_blank">
+                    <div class="gofundme_btn_text">GoFundMe</div>
+                  </a>
+                </div>
+                <div class="gofundme_small_print">*GoFundMe takes 5%: contact Mike for bank transfer if possible.</div>
+              </div>
+              <a class="gofundme_image_container" href="https://gofund.me/49994ec23" target="_blank">
+                <img class="gofundme_image" src="../../../public/images/support/gofundme_page.jpeg" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <Footer />
+      </article>
+    </main>
+  </body>
+</html>
