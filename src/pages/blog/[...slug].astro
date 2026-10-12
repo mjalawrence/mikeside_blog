@@ -1,20 +1,61 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
+
 	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
+		params: {
+			slug: post.id,
+		},
+		props: {
+			post,
+		},
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+type Props = {
+	post: CollectionEntry<'blog'>;
+};
+
+const { post } = Astro.props;
+
 const { Content } = await render(post);
+
+const allPosts = await getCollection('blog');
+
+const sortedPosts = allPosts.sort(
+	(a, b) =>
+		a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+);
+
+const currentIndex = sortedPosts.findIndex(
+	(p) => p.id === post.id
+);
+
+const previousPost = sortedPosts[currentIndex - 1];
+const nextPost = sortedPosts[currentIndex + 1];
 ---
 
-<BlogPost {...post.data}>
+<BlogPost 
+	{...post.data}
+	previousPost={previousPost}
+	nextPost={nextPost}
+>
 	<Content />
+
+	<!-- <nav class="post-navigation">
+		{previousPost && (
+			<a href={`/blog/${previousPost.id}`}>
+				← {previousPost.data.title}
+			</a>
+		)}
+
+		{nextPost && (
+			<a href={`/blog/${nextPost.id}`}>
+				{nextPost.data.title} →
+			</a>
+		)}
+	</nav> -->
 </BlogPost>
