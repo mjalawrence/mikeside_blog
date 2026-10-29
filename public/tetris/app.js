@@ -2,10 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const grid = document.querySelector('.grid');
   let squares = Array.from(document.querySelectorAll('.grid div'));
   const scoreDisplay = document.querySelector('#score');
+  const pauseBtn = document.querySelector('#pause-button');
   const startBtn = document.querySelector('#start-button');
   const width = 10;
   let nextRandom = 0;
+  let gameStarted = false;
   let gamePaused = false;
+  let gameFinished = false;
   let timerId;
   let score = 0;
   let speed = 1000;
@@ -19,13 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     '#f71fa4'
   ];
   let gameOverModal = document.querySelector("#game-over");
+  let pauseModal = document.querySelector("#pause");
   const playAgainBtn = document.querySelector('#restart-button');
 
-window.addEventListener("keydown", function(e) {
-    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1){
-      e.preventDefault();
-    }
-  }, false);
 
   //The Tetrominoes
   const lTetromino = [
@@ -96,8 +95,12 @@ window.addEventListener("keydown", function(e) {
     })
   }
 
+  let downKeyHeld = false;
+  let softDropInterval;
+
   //assign functions to keyCodes
   function control(e) {
+    if (gameFinished || (!gameStarted && e.code !== 'Space')) return
     if(e.keyCode === 37) {
       moveLeft();
     } else if (e.keyCode === 38) {
@@ -105,25 +108,57 @@ window.addEventListener("keydown", function(e) {
     } else if (e.keyCode === 39) {
       moveRight();
     } else if (e.keyCode === 40) {
-      moveDown();
+      if (!downKeyHeld) {
+        downKeyHeld = true;
+        moveDown(); 
+        // Move immediately on press
+        softDropInterval = setInterval(() => {
+          if (gameFinished) return
+          moveDown(); 
+          // Continue while held        
+        }, 50);
+      }
+      // return;    
+    } else if (e.code === 'Space') {
+      startBtn.style.display = 'none';
+      stopStart()
+    }         
+      // e.preventDefault();  
     }
-    e.preventDefault();
-  }
-  document.addEventListener('keyup', control, false)
+ // document.addEventListener('keyup', control, false)
+
+// can this integrate with control(e)
+  function stopSoftDrop(e) {
+    if (e.keyCode === 40) {
+      downKeyHeld = false;
+      clearInterval(softDropInterval);
+    }}
+  document.addEventListener('keydown', control);document.addEventListener('keyup', stopSoftDrop, false);
+
 
   //move down function
   function moveDown() {
-    if (gamePaused) {
+    if (gamePaused || !gameStarted) {
       return;
     }
     undraw();
+     // Check whether moving down would collide with something
+    if (current.some(index =>
+      squares[currentPosition + index + width].classList.contains('taken') ||
+      squares[currentPosition + index + width].classList.contains('bottom-row')
+    )) {
+      draw();
+      freeze();
+      return;
+    }
     currentPosition += width;
     draw();
-    freeze();
+    // freeze();
   }
 
   //freeze function
   function freeze() {
+
     if(current.some(index => squares[currentPosition + index + width].classList.contains('taken')) || current.some(index => squares[currentPosition + index + width].classList.contains('bottom-row'))) {
       current.forEach(index => squares[currentPosition + index].classList.add('taken'));
       //start a new tetromino falling
@@ -131,10 +166,11 @@ window.addEventListener("keydown", function(e) {
       nextRandom = Math.floor(superRandom() * theTetrominoes.length);
       current = theTetrominoes[random][currentRotation];
       currentPosition = 4;
+      addScore();
       draw();
       displayShape();
-      addScore();
       gameOver();
+
     }
   }
 
@@ -192,24 +228,46 @@ window.addEventListener("keydown", function(e) {
     }
   }
   
-  //rotate the tetromino
-  function rotate() {
-    if (gamePaused) {
-      return;
-    }
-    undraw()
-    currentRotation ++
-    if(currentRotation === current.length) { //if the current rotation gets to 4, make it go back to 0
-      currentRotation = 0
-    }
-    current = theTetrominoes[random][currentRotation]
-    checkRotatedPosition()
-    draw()
-  }
-  /////////
+ 
+  function isValidPosition() {
+  return current.every(index => {
+    const position = currentPosition + index;
 
+    return (
+      position >= 0 &&
+      position < squares.length &&
+      !squares[position].classList.contains('taken') &&
+      !squares[position].classList.contains('bottom-row')
+    );
+  });
+}
+
+  //rotate the tetromino
   
-  
+  function rotate() {
+    if (gamePaused) return;
+
+    undraw();
+
+    const previousRotation = currentRotation;
+    const previousPosition = currentPosition;
+
+    currentRotation = (currentRotation + 1) % theTetrominoes[random].length;
+    current = theTetrominoes[random][currentRotation];
+
+    checkRotatedPosition();
+
+    if (!isValidPosition()) {
+      currentRotation = previousRotation;
+      currentPosition = previousPosition;
+      current = theTetrominoes[random][currentRotation];
+    }
+
+    draw();
+  }
+
+  // Up next Shapes
+
   //show up-next tetromino in mini-grid display
   const displaySquares = document.querySelectorAll('.mini-grid div')
   const displayWidth = 4
@@ -244,13 +302,29 @@ window.addEventListener("keydown", function(e) {
     })
   }
 
+  // Extra game controls 
+  
   //add functionality to the button
+  pauseBtn.addEventListener('click', () => {
+    stopStart()
+  })
+
   startBtn.addEventListener('click', () => {
+    startBtn.style.display = 'none';
+    stopStart()
+  })
+
+  function stopStart() {
+    //  pause    
     if (timerId) {
       clearInterval(timerId)
       timerId = null
       gamePaused = true;
+      pauseModal.style.display = 'block';
+      
+      // resume/start    
     } else {
+      if (!gameStarted) gameStarted = true;
       draw()
       timerId = setInterval(moveDown, speed)
       if (!gamePaused) {
@@ -258,10 +332,13 @@ window.addEventListener("keydown", function(e) {
       }
       displayShape()
       gamePaused = false;
+      pauseModal.style.display = 'none';
     }
-  })
+  }
 
   playAgainBtn.addEventListener('click', () => {
+
+    gameFinished = false;
     playAgain()
   })
 
@@ -279,8 +356,8 @@ window.addEventListener("keydown", function(e) {
           squares[index].style.backgroundColor = ''
         })
         const squaresRemoved = squares.splice(i, width)
-        squares = squaresRemoved.concat(squares)
-        squares.forEach(cell => grid.appendChild(cell))
+        squares = squaresRemoved.concat(squares) // removes the cleared squares and adds them to the top
+        squares.forEach(cell => grid.appendChild(cell)) // pushes the squares down 
         increaseSpeed()
       }
     }
@@ -291,6 +368,7 @@ window.addEventListener("keydown", function(e) {
     const scoreRaw = score / 100;
     if (scoreRaw % 1 === 0) {
       speed -= 100;
+      clearInterval(timerId)
       timerId = setInterval(moveDown, speed)
     }
   }
@@ -298,9 +376,11 @@ window.addEventListener("keydown", function(e) {
   //game over
   function gameOver() {
     if(current.some(index => squares[currentPosition + index].classList.contains('taken')) || current.some(index => squares[currentPosition + index].classList.contains('bottom-row'))) {
-      scoreDisplay.innerHTML = 'end'
       clearInterval(timerId)
+      nextRandom = 0
       gameOverModal.style.display = 'flex';
+      pauseModal.style.display = 'none';
+      gameFinished = true;
     }
   }
 
@@ -323,16 +403,18 @@ window.addEventListener("keydown", function(e) {
 
   function superRandom() {
 
-    // console.log(Math.floor(Math.random()))
-    // console.log(Math.random(Math.random()))
-    // console.log(Math.random(Math.random(Math.random(Math.random(Math.random(Math.random()))))))
-    // console.log(Math.random()*Math.random())
-    // console.log(Math.random()*Math.random()*Math.random())
+    // // // improve randomiser
 
     const randomNo = Math.random(Math.random(Math.random(Math.random())));
     // console.log(randomNo)
 
     return randomNo;
   }
-
 })
+
+// Disable scroll when playing tetris
+window.addEventListener("keydown", function(e) {
+  if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1){
+    e.preventDefault();
+  }
+}, false);

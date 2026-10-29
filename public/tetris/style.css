@@ -3,7 +3,24 @@ body {
   position: relative;
 }
 
+#pause {
+  display: none;
+  position: absolute;
+  top: 45%;
+  left: 37%;
+  color: white;
+}
+
+#start-button {
+  /* display: none; */
+  position: absolute;
+  top: 45%;
+  left: 37%;
+}
+
+
 #game-over {
+  z-index: 1;
   display: none;
   background: hsla(206, 7%, 20%, 0.5);
   position: absolute;
@@ -47,11 +64,15 @@ body {
   width: 100%;
 }
 
-.container {
+.tetris_container {
   display: flex;
   justify-content: flex-end;
   padding: 20px;
   /* background-color: #f0f0f0; */
+}
+
+.container {
+  position: relative;
 }
 
 .grid {
