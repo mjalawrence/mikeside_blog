@@ -2,7 +2,9 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <script src="app.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./scripts/supabase.js"></script>
+    <script type="module" src="./scripts/app.js" charset="utf-8"></script>
     <link rel="stylesheet" href="style.css"></link>
   </head>
   <body>
@@ -11,18 +13,17 @@
       <div class="game-over-modal">
         <h2>Game Over</h2>
         <div class="game-over-options">
-          <form class="score-form"> 
+          <div class="score-form"> 
             <div class="form-field">
               <label for="name">Name:</label>
               <input type="text" id="name" name="name">
             </div>
-            <button id="submit-score">Submit Score</button>
-          </form>
+            <button id="submit-score" type="button">Submit Score</button>
+          </div>
           <button id="restart-button">Play again</button>
         </div>
       </div>
     </div>
-
     
     <div class="tetris_container">
       <div class="container">
@@ -266,11 +267,41 @@
           <div></div>
         </div>
         
-          <div class="button">
-            <button id="pause-button">Pause</button>
+          <div class="">
+            <!-- <button id="pause-button">Pause</button> -->
+            Space : pause
+          </div>
+            <div class="">
+              Up : rotate
+            </div>
+              <div class="">
+                Left/Right : move
+              </div>
+                <div class="">
+             Down : drop
           </div>
             <div class="button">Score:<span id="score">0</span></div>
         </div>
+        <div id="leaderboard">
+  <h2>Leaderboard</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard-scores">
+      <tr>
+        <td colspan="3">Loading scores...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
       </div>
     </div>
   </body>
