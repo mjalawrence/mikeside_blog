@@ -1,6 +1,6 @@
 export const CONFIG = {
     BOARD_WIDTH: 10,
-    // BOARD_HEIGHT: 20,
+    BOARD_HEIGHT: 20,
 
     INITIAL_SPEED: 1000,
     SPEED_INCREMENT: 100,
@@ -9,5 +9,5 @@ export const CONFIG = {
     SOFT_DROP_INTERVAL: 90,
 
     POINTS_PER_ROW: 10,
-    POINTS_PER_LEVEL: 100
+    POINTS_PER_LEVEL: 100,
 };
