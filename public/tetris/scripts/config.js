@@ -8,6 +8,5 @@ export const CONFIG = {
 
   SOFT_DROP_INTERVAL: 90,
 
-  POINTS_PER_ROW: 10,
-  POINTS_PER_LEVEL: 100,
+  ROWS_PER_LEVEL: 10,
 };

@@ -1,49 +1,66 @@
 import { CONFIG } from './config.js';
-import { updateScoreDisplay } from './ui.js';
+
+// Points awarded for clearing 1, 2, 3 or 4 rows simultaneously
+const LINE_CLEAR_POINTS = [0, 100, 300, 500, 800];
 
 export function addScore(game) {
-  for (let rowStart = 0; rowStart < game.BOARD_SIZE;) {
-    const row = Array.from({ length: game.width }, (_, offset) => rowStart + offset);
+  let linesCleared = 0;
+
+  for (let i = 0; i < game.BOARD_SIZE;) {
+    const row = Array.from({ length: game.width }, (_, index) => i + index);
+
     const isFullRow = row.every((index) => game.squares[index].classList.contains('taken') || game.squares[index].classList.contains('bottom-row'));
 
-    if (!isFullRow) {
-      rowStart += game.width;
-      continue;
+    if (isFullRow) {
+      row.forEach((index) => {
+        game.squares[index].classList.remove('taken', 'tetromino');
+        game.squares[index].style.backgroundColor = '';
+      });
+
+      const squaresRemoved = game.squares.splice(i, game.width);
+      game.squares = squaresRemoved.concat(game.squares);
+
+      game.squares.forEach((cell) => game.grid.appendChild(cell));
+
+      linesCleared++;
+    } else {
+      i += game.width;
     }
-
-    game.score += CONFIG.POINTS_PER_ROW;
-    game.rowsCleared += 1;
-
-    row.forEach((index) => {
-      game.squares[index].classList.remove('taken', 'tetromino');
-      game.squares[index].style.backgroundColor = '';
-    });
-
-    // Move the cleared row to the top, then re-check this row index.
-    const removedRow = game.squares.splice(rowStart, game.width);
-    game.squares = removedRow.concat(game.squares);
-    // pushes the squares down
-    game.squares.forEach((cell) => game.grid.appendChild(cell));
-
-    updateScoreDisplay(game);
-    levelUp(game);
   }
+
+  if (linesCleared === 0) return;
+
+  // Award points based on the number of rows cleared at once
+  const points = LINE_CLEAR_POINTS[linesCleared] || 0;
+
+  game.score += points * (game.level + 1);
+  game.rowsCleared += linesCleared;
+
+  game.scoreDisplay.textContent = game.score;
+
+  // Level progression is based on total rows cleared, not score
+  levelUp(game);
 }
 
 export function levelUp(game) {
-  // Each level is 100 points.
-  const targetLevel = Math.floor(game.score / CONFIG.POINTS_PER_LEVEL);
-  while (game.level < targetLevel) {
-    game.level += 1;
-    increaseSpeed(game);
+  const newLevel = Math.floor(game.rowsCleared / CONFIG.ROWS_PER_LEVEL);
+
+  if (newLevel > game.level) {
+    const levelsGained = newLevel - game.level;
+
+    game.level = newLevel;
+
+    // Increase speed for each level gained
+    game.speed = Math.max(CONFIG.MIN_SPEED, game.speed - CONFIG.SPEED_INCREMENT * levelsGained);
+
+    // Restart gravity timer at the new speed
+    if (game.timerId !== null) {
+      clearInterval(game.timerId);
+      game.timerId = setInterval(() => game.moveDown(), game.speed);
+    }
   }
-}
 
-export function increaseSpeed(game) {
-  game.speed = Math.max(CONFIG.MIN_SPEED, game.speed - CONFIG.SPEED_INCREMENT);
-
-  if (game.timerId !== null) {
-    clearInterval(game.timerId);
-    game.timerId = setInterval(() => game.moveDown(), game.speed);
+  if (game.levelDisplay) {
+    game.levelDisplay.textContent = game.level;
   }
 }

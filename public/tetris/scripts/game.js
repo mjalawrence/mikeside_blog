@@ -17,6 +17,7 @@ export class Game {
 
     // UI elements
     this.scoreDisplay = document.querySelector('#score');
+    this.levelDisplay = document.querySelector('#level');
     this.startBtn = document.querySelector('#start-button');
     this.gameOverModal = document.querySelector('#game-over');
     this.pauseModal = document.querySelector('#pause');
