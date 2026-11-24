@@ -62,8 +62,6 @@ export class Game {
   }
 
   init() {
-    displayShape(this);
-
     this.startBtn?.addEventListener('click', () => {
       this.startBtn.style.display = 'none';
       stopStart(this);
