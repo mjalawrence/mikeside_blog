@@ -1,12 +1,9 @@
-// add this. to all variable and method calls in this file
-
 import { getTetrominoes, getUpNextTetrominoes } from './tetrominoes.js';
-import { draw, undraw, isValidPosition, isOccupied } from './board.js';
+import { draw, undraw, isValidPosition, isOccupied, isAtLeftEdge, isAtRightEdge } from './board.js';
 import { addScore } from './scoring.js';
 import { prepareScore } from './leaderboard.js';
-import { displayShape, showGameOver } from './ui.js';
+import { displayShape, hideGameOver, hidePause, showGameOver, updateScoreDisplay } from './ui.js';
 import { stopStart } from './controls.js';
-
 import { CONFIG } from './config.js';
 
 export class Game {
@@ -14,7 +11,6 @@ export class Game {
     // Board
     this.grid = document.querySelector('.grid');
     this.squares = Array.from(document.querySelectorAll('.grid div'));
-
     this.width = CONFIG.BOARD_WIDTH;
     this.height = CONFIG.BOARD_HEIGHT;
     this.BOARD_SIZE = this.width * this.height;
@@ -25,7 +21,13 @@ export class Game {
     this.gameOverModal = document.querySelector('#game-over');
     this.pauseModal = document.querySelector('#pause');
     this.playAgainBtn = document.querySelector('#restart-button');
-    this.submitButton = document.getElementById('submit-score');
+    this.submitButton = document.querySelector('#submit-score');
+
+    // Next Tet display
+    this.displaySquares = Array.from(document.querySelectorAll('.mini-grid div'));
+    this.displayWidth = 4;
+    this.displayIndex = 0;
+    this.upNextTetrominoes = getUpNextTetrominoes(this.displayWidth);
 
     // Game state
     this.gameStarted = false;
@@ -47,41 +49,45 @@ export class Game {
 
     // Tetrominoes
     this.theTetrominoes = getTetrominoes(this.width);
-
     this.currentPosition = 4;
     this.currentRotation = 0;
-
     this.random = this.randomTetromino();
     this.nextRandom = 0;
-
     this.current = this.theTetrominoes[this.random][this.currentRotation];
 
-    // Next piece display
-    this.displaySquares = document.querySelectorAll('.mini-grid div');
-    this.displayWidth = 4;
-    this.displayIndex = 0;
-
-    this.upNextTetrominoes = getUpNextTetrominoes(this.displayWidth);
+    // Supabase
+    this.scoreSubmitting = false;
+    this.scoreSubmitted = false;
   }
 
   init() {
     displayShape(this);
 
-    this.startBtn.addEventListener('click', () => {
+    this.startBtn?.addEventListener('click', () => {
       this.startBtn.style.display = 'none';
       stopStart(this);
     });
 
-    this.playAgainBtn.addEventListener('click', () => {
-      this.gameFinished = false;
-      this.playAgain();
-    });
+    this.playAgainBtn?.addEventListener('click', () => this.playAgain());
 
-    this.submitButton.addEventListener('click', async () => {
-      // const playerName = document.getElementById('name').value.trim();
-      // gameDuratQion = Math.floor((Date.now() - gameStartTime) / 1000);
-      // console.log(`Game duration: ${gameDuration} seconds`);
-      prepareScore(this);
+    this.submitButton?.addEventListener('click', async () => {
+      if (this.scoreSubmitting || this.scoreSubmitted) return;
+
+      this.scoreSubmitting = true;
+      this.submitButton.disabled = true;
+
+      try {
+        const success = await prepareScore(this);
+
+        if (success) {
+          this.scoreSubmitted = true;
+        } else {
+          console.warn('Score was not submitted.');
+        }
+      } finally {
+        this.scoreSubmitting = false;
+        this.submitButton.disabled = this.scoreSubmitted;
+      }
     });
   }
 
@@ -89,11 +95,9 @@ export class Game {
     return Math.floor(Math.random() * this.theTetrominoes.length);
   }
 
-  //move down function
   moveDown() {
-    if (this.gamePaused || !this.gameStarted) {
-      return;
-    }
+    if (this.gamePaused || !this.gameStarted || this.gameFinished) return;
+
     undraw(this.squares, this.current, this.currentPosition);
     // Check whether moving down would collide with something
     if (this.current.some((index) => isOccupied(this.squares, this.currentPosition + index + this.width))) {
@@ -101,66 +105,56 @@ export class Game {
       this.freeze();
       return;
     }
+
     this.currentPosition += this.width;
     draw(this.squares, this.current, this.currentPosition, this.random);
-    // freeze();
   }
 
-  //freeze function
   freeze() {
+    if (!this.current.some((index) => isOccupied(this.squares, this.currentPosition + index + this.width))) return;
+
+    this.current.forEach((index) => {
+      this.squares[this.currentPosition + index].classList.add('taken');
+    });
+
     // new tet always starts in same position
     this.currentRotation = 0;
+    this.random = this.nextRandom;
+    this.nextRandom = this.randomTetromino();
+    this.current = this.theTetrominoes[this.random][this.currentRotation];
+    this.currentPosition = 4;
 
-    if (this.current.some((index) => isOccupied(this.squares, this.currentPosition + index + this.width))) {
-      this.current.forEach((index) => this.squares[this.currentPosition + index].classList.add('taken'));
-      //start a new tetromino falling
-      this.random = this.nextRandom;
-      this.nextRandom = this.randomTetromino();
-      this.current = this.theTetrominoes[this.random][this.currentRotation];
-      this.currentPosition = 4;
-      addScore(this);
-      draw(this.squares, this.current, this.currentPosition, this.random);
-      displayShape(this);
-      this.gameOver();
-    }
+    addScore(this);
+    draw(this.squares, this.current, this.currentPosition, this.random);
+    displayShape(this);
+    this.gameOver();
     console.log('speed', this.speed);
   }
 
-  //move the tetromino left, unless is at the edge or there is a blockage
   moveLeft() {
-    if (this.gamePaused) {
-      return;
-    }
+    if (this.gamePaused || this.gameFinished) return;
+
     undraw(this.squares, this.current, this.currentPosition);
-    this.isAtLeftEdge = this.current.some((index) => (this.currentPosition + index) % this.width === 0);
-    if (!this.isAtLeftEdge) this.currentPosition -= 1;
+    if (!isAtLeftEdge(this.current, this.currentPosition, this.width)) {
+      this.currentPosition -= 1;
+    }
     if (this.current.some((index) => isOccupied(this.squares, this.currentPosition + index))) {
       this.currentPosition += 1;
     }
     draw(this.squares, this.current, this.currentPosition, this.random);
   }
 
-  //move the tetromino right, unless is at the edge or there is a blockage
   moveRight() {
-    if (this.gamePaused) {
-      return;
-    }
+    if (this.gamePaused || this.gameFinished) return;
+
     undraw(this.squares, this.current, this.currentPosition);
-    this.isAtRightEdge = this.current.some((index) => (this.currentPosition + index) % this.width === this.width - 1);
-    if (!this.isAtRightEdge) this.currentPosition += 1;
+    if (!isAtRightEdge(this.current, this.currentPosition, this.width)) {
+      this.currentPosition += 1;
+    }
     if (this.current.some((index) => isOccupied(this.squares, this.currentPosition + index))) {
       this.currentPosition -= 1;
     }
     draw(this.squares, this.current, this.currentPosition, this.random);
-  }
-
-  ///FIX ROTATION OF TETROMINOS A THE EDGE
-  isAtRight() {
-    return this.current.some((index) => (this.currentPosition + index + 1) % this.width === 0);
-  }
-
-  isAtLeft() {
-    return this.current.some((index) => (this.currentPosition + index) % this.width === 0);
   }
 
   checkRotatedPosition(P) {
@@ -180,70 +174,83 @@ export class Game {
     }
   }
 
-  //rotate the tetromino
+  isAtRight() {
+    return isAtRightEdge(this.current, this.currentPosition, this.width);
+  }
+
+  isAtLeft() {
+    return isAtLeftEdge(this.current, this.currentPosition, this.width);
+  }
 
   rotate() {
-    if (this.gamePaused) return;
+    if (this.gamePaused || this.gameFinished) return;
 
     undraw(this.squares, this.current, this.currentPosition);
-
-    this.previousRotation = this.currentRotation;
-    this.previousPosition = this.currentPosition;
+    const previousRotation = this.currentRotation;
+    const previousPosition = this.currentPosition;
 
     this.currentRotation = (this.currentRotation + 1) % this.theTetrominoes[this.random].length;
     this.current = this.theTetrominoes[this.random][this.currentRotation];
-
     this.checkRotatedPosition();
 
     if (!isValidPosition(this.squares, this.current, this.currentPosition)) {
-      this.currentRotation = this.previousRotation;
-      this.currentPosition = this.previousPosition;
+      this.currentRotation = previousRotation;
+      this.currentPosition = previousPosition;
       this.current = this.theTetrominoes[this.random][this.currentRotation];
     }
 
     draw(this.squares, this.current, this.currentPosition, this.random);
   }
 
-  // game over
   gameOver() {
-    if (this.current.some((index) => isOccupied(this.squares, this.currentPosition + index))) {
-      this.stopTimers();
-      this.gameDuration = Math.floor((Date.now() - this.gameStartTime) / 1000);
-      console.log(`Game duration: ${this.gameDuration} seconds`);
-      this.nextRandom = 0;
-      showGameOver(this);
-      this.gameFinished = true;
-    }
+    if (!this.current.some((index) => isOccupied(this.squares, this.currentPosition + index))) return;
+
+    this.stopTimers();
+    this.gameDuration = Math.floor((Date.now() - this.gameStartTime) / 1000);
+    console.log(`Game duration: ${this.gameDuration} seconds`);
+    this.nextRandom = 0;
+    this.gameFinished = true;
+    this.gamePaused = false;
+    showGameOver(this);
   }
 
-  //play again
   playAgain() {
+    this.stopTimers();
     this.squares.forEach((square) => {
-      square.classList.remove('tetromino');
-      square.classList.remove('taken');
+      square.classList.remove('tetromino', 'taken');
       square.style.backgroundColor = '';
     });
-    this.speed = CONFIG.INITIAL_SPEED;
-    this.rowsCleared = 0;
-    this.level = 0;
-    this.gameStartTime = Date.now();
-    // are both of these necessary? ***
-    displayShape(this);
-    this.nextRandom = 0;
+
     this.score = 0;
-    this.gameOverModal.style.display = 'none';
-    draw(this.squares, this.current, this.currentPosition, this.random);
-    this.timerId = setInterval(() => this.moveDown(), this.speed);
+    this.level = 0;
+    this.rowsCleared = 0;
+    this.speed = CONFIG.INITIAL_SPEED;
+    this.gameStarted = true;
+    this.gamePaused = false;
+    this.gameFinished = false;
+    this.gameStartTime = Date.now();
+    this.gameDuration = null;
+
+    this.currentRotation = 0;
+    this.currentPosition = 4;
+    this.random = this.randomTetromino();
     this.nextRandom = this.randomTetromino();
-    // are both of these necessary? ***
-    // displayShape(this);
+    this.current = this.theTetrominoes[this.random][this.currentRotation];
+
+    updateScoreDisplay(this);
+    hideGameOver(this);
+    hidePause(this);
+    displayShape(this);
+    draw(this.squares, this.current, this.currentPosition, this.random);
+
+    this.timerId = setInterval(() => this.moveDown(), this.speed);
   }
 
   stopTimers() {
-    clearInterval(this.timerId);
-    clearInterval(this.softDropInterval);
-
+    if (this.timerId !== null) clearInterval(this.timerId);
+    if (this.softDropInterval !== null) clearInterval(this.softDropInterval);
     this.timerId = null;
     this.softDropInterval = null;
+    this.downKeyHeld = false;
   }
 }

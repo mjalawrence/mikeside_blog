@@ -1,20 +1,47 @@
 import { colors } from './tetrominoes.js';
-// Up next Shapes
 
-//display the shape in the mini-grid display
 export function displayShape(game) {
-  //remove any trace of a tetromino form the entire grid
   game.displaySquares.forEach((square) => {
     square.classList.remove('tetromino');
     square.style.backgroundColor = '';
   });
-  game.upNextTetrominoes[game.nextRandom].forEach((index) => {
-    game.displaySquares[game.displayIndex + index].classList.add('tetromino');
-    game.displaySquares[game.displayIndex + index].style.backgroundColor = colors[game.nextRandom];
+
+  const shape = game.upNextTetrominoes[game.nextRandom];
+  if (!shape) return;
+
+  shape.forEach((index) => {
+    const square = game.displaySquares[game.displayIndex + index];
+    if (!square) return;
+    square.classList.add('tetromino');
+    square.style.backgroundColor = colors[game.nextRandom];
   });
 }
 
+export function updateScoreDisplay(game) {
+  if (game.scoreDisplay) game.scoreDisplay.textContent = String(game.score);
+}
+
 export function showGameOver(game) {
-  game.gameOverModal.style.display = 'flex';
-  game.pauseModal.style.display = 'none';
+  if (game.gameOverModal) game.gameOverModal.style.display = 'flex';
+  if (game.pauseModal) game.pauseModal.style.display = 'none';
+}
+
+export function showPause(game) {
+  if (game.pauseModal) game.pauseModal.style.display = 'block';
+}
+
+export function hidePause(game) {
+  if (game.pauseModal) game.pauseModal.style.display = 'none';
+}
+
+export function showStartButton(game) {
+  if (game.startBtn) game.startBtn.style.display = '';
+}
+
+export function hideStartButton(game) {
+  if (game.startBtn) game.startBtn.style.display = 'none';
+}
+
+export function hideGameOver(game) {
+  if (game.gameOverModal) game.gameOverModal.style.display = 'none';
 }
